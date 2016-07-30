@@ -1,0 +1,11 @@
+target
+project/project
+project/target
+bin
+.cache-main
+.classpath
+.project
+.settings
+robocode.config
+robots
+config
