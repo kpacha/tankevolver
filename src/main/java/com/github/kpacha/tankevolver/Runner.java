@@ -1,10 +1,6 @@
 package com.github.kpacha.tankevolver;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -29,8 +25,8 @@ public class Runner {
 
 	private static final String STORE_PATH = "current_generation.xml";
 	private static final String OPPONENT = "sample.SpinBot";
-	private static final int EXECUTION_TIMEOUT = 5;
-	private static final int NUM_ROUNDS = 5;
+	private static final int EXECUTION_TIMEOUT = 10;
+	private static final int NUM_ROUNDS = 10;
 	private static BattlefieldSpecification fieldSpecs = new BattlefieldSpecification();
 	private RobocodeEngine engine;
 	private int generations;
@@ -127,9 +123,8 @@ public class Runner {
 				o.onIndividualCompleted(subject);
 			}
 			try {
-				Thread.sleep(500);
+				Thread.sleep(750);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
