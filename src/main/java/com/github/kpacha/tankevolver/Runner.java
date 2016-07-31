@@ -123,6 +123,12 @@ public class Runner {
 
 	public static void main(String[] args) {
 		Runner runner = new Runner(100, 100);
+		runner.addLogger(new EvolutionLogger(){
+			@Override
+			public void log(String msg) {
+				System.out.print(msg);
+			}
+		});
 		runner.run();
 	}
 
