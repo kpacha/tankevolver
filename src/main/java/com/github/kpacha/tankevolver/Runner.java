@@ -1,5 +1,10 @@
 package com.github.kpacha.tankevolver;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -22,6 +27,7 @@ import robocode.control.events.BattleErrorEvent;
 
 public class Runner {
 
+	private static final String STORE_PATH = "current_generation.xml";
 	private static final String OPPONENT = "sample.SpinBot";
 	private static final int EXECUTION_TIMEOUT = 5;
 	private static final int NUM_ROUNDS = 5;
@@ -54,20 +60,39 @@ public class Runner {
 		}
 	}
 
-	public void run() {
+	public void run() throws InterruptedException {
 		engine = new RobocodeEngine();
 		engine.addBattleListener(listener);
-		currentGeneration = Population.random(population);
+		currentGeneration = getInitialPopulation();
+		int initialGeneration = currentGeneration.getIndividuals()[0].generation();
 		for (int g = 0; g < generations; g++) {
-			runGeneration(g);
+			runGeneration(g + initialGeneration);
 			Individual winner = currentGeneration.fittest();
 			for (EvolutionObserver o : observers) {
 				o.onGenerationCompleted(winner);
 			}
 			currentGeneration = currentGeneration.nextGeneration();
+			storeCurrentPopulation();
+			Thread.sleep(3000);
 		}
 		engine.removeBattleListener(listener);
 		engine.close();
+	}
+
+	private Population getInitialPopulation() {
+		File f = new File(STORE_PATH);
+		if (f.length() == 0){
+			return Population.random(population);
+		}
+		Population pop = Population.loadXMLFile(STORE_PATH);
+		if (pop.getIndividuals().length != population) {
+			population = pop.getIndividuals().length;
+		}
+		return pop;
+	}
+
+	private void storeCurrentPopulation() {
+		currentGeneration.saveAsXML(STORE_PATH);
 	}
 
 	private void runGeneration(int generationNum) {
@@ -101,6 +126,12 @@ public class Runner {
 			for (EvolutionObserver o : observers) {
 				o.onIndividualCompleted(subject);
 			}
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -123,13 +154,17 @@ public class Runner {
 
 	public static void main(String[] args) {
 		Runner runner = new Runner(100, 100);
-		runner.addLogger(new EvolutionLogger(){
+		runner.addLogger(new EvolutionLogger() {
 			@Override
 			public void log(String msg) {
 				System.out.print(msg);
 			}
 		});
-		runner.run();
+		try {
+			runner.run();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 	class BattleObserver extends BattleAdaptor {
