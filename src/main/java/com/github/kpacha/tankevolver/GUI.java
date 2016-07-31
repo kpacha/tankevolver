@@ -2,6 +2,8 @@ package com.github.kpacha.tankevolver;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
+
 import java.awt.BorderLayout;
 
 import com.github.kpacha.tankbuilder.Individual;
@@ -11,7 +13,6 @@ import java.awt.Color;
 import javax.swing.JSplitPane;
 import java.awt.GridLayout;
 import javax.swing.JTextPane;
-import javax.swing.ScrollPaneLayout;
 import javax.swing.JTabbedPane;
 import javax.swing.JScrollPane;
 
@@ -27,7 +28,7 @@ public class GUI {
 	 */
 	public static void main(String[] args) {
 		try {
-			GUI window = new GUI(100, 50);
+			GUI window = new GUI(100, 100);
 			window.frmTankEvolver.setVisible(true);
 			window.runner.run();
 		} catch (Exception e) {
@@ -99,9 +100,9 @@ public class GUI {
 
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		innerSplitPane.setRightComponent(tabbedPane);
-		
-		JTextPane logsPane = new LoggerPanel(runner);
-		tabbedPane.addTab("Log", null, new JScrollPane(logsPane), null);
+
+		LoggerPanel logsPane = new LoggerPanel(runner);
+		tabbedPane.addTab("Log", null, logsPane.getScrollPane(), null);
 
 		JTextPane codePane = new JTextPane();
 		codePane.setEditable(false);
